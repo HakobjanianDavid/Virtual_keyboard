@@ -15,7 +15,6 @@ function ready() {
     let backspace = document.createElement('div');
     backspace.className = 'key-button backspace';
     backspace.innerText = 'Backspace';
-    backspace.onkeyup
 
     let tab = document.createElement('div');
     tab.className = 'key-button tab';
@@ -31,6 +30,7 @@ function ready() {
 
     let leftShift = document.createElement('div');
     leftShift.className = 'key-button first-shift';
+    leftShift.innerText = 'Shift';
 
     let rightShift = document.createElement('div');
     rightShift.className = 'key-button second-shift';
@@ -139,37 +139,68 @@ function ready() {
     
     
     init();
+
+    // document.onkeydown = function (event) {}
+
     
+    document.onkeydown = function (event) {
+        let code =  event.code; 
+        let content = textarea.textContent;
+        
+        let result = '';
+        if(code == 'Backspace' ) {
+            backspace.classList.add('active');
+            result = content.split('');
+            let b = result.pop();
+            textarea.innerText = result.join('');
+        } else if(code == 'Delete') {
+            del.classList.add('active');
+        }
+    };
+
     document.onkeypress = function (event) {
         let simpleKeys = document.querySelectorAll('.simple');
-
+    
         simpleKeys.forEach(element => {
             element.classList.remove('active');
         });
         document.querySelector('.simple[data = "'+event.keyCode+'"]').classList.add('active');
         textarea.textContent += event.key;
+    
     };
+
+    document.onkeyup = function (event) {
+        let code =  event.code; 
+        let simpleKeys = document.querySelectorAll('.simple');
+
+
+        if(code == 'Backspace' ) {
+            backspace.classList.remove('active');
+        } else if(code == 'Delete') {
+            del.classList.remove('active');            
+        } else {
+            simpleKeys.forEach(element => {
+                element.classList.remove('active');
+            });
+        }
+    }
 
     document.querySelectorAll('.simple').forEach(element => {
         element.onclick = function (event) {
+            
             document.querySelectorAll('.simple').forEach(element => {
                 element.classList.remove('active');
             });
             let code = this.getAttribute('data');
             this.classList.add('active');
             textarea.textContent += this.textContent;
-            
-
-            //Использовать метод слайс для backspace
-
-            console.log(typeof(textarea.textContent));
         };
 
         element.onmousemove = function () {
             document.querySelectorAll('.simple').forEach(element => {
                 element.classList.remove('active');
             });
-        };
+        }
     });
 }
 
