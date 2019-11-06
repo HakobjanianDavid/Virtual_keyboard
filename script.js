@@ -31,9 +31,6 @@ function ready() {
 
     let leftShift = document.createElement('div');
     leftShift.className = 'key-button first-shift';
-    leftShift.innerText = 'Shift';
-
-    // leftShift.
 
     let rightShift = document.createElement('div');
     rightShift.className = 'key-button second-shift';
@@ -44,7 +41,7 @@ function ready() {
     arrowUp.innerHTML = '&#8593';
 
     let ctrl = document.createElement('div');
-    // ctrl.className = 'key-button';
+    ctrl.className = 'key-button';
     ctrl.innerText = 'Ctrl';
 
     let win = document.createElement('div');
@@ -73,7 +70,8 @@ function ready() {
 
     let textarea = document.createElement('textarea');
     textarea.className = 'field';
-    textarea.setAttribute('readonly', '')
+    textarea.setAttribute('rows', '15');
+    textarea.setAttribute('cols', '100');
 
     function init() {
 
@@ -141,57 +139,38 @@ function ready() {
     
     
     init();
-
-    // document.onkeypress = function(event) {
-    //     console.log(event.code, event.keyCode);
-
-    //     document.querySelectorAll('.conteiner div').forEach(element => {
-    //         element.classList.remove('active');
-    //     });
-
-    //     document.querySelector('.conteiner div[data ="' + event.keyCode +'"]')
-    //             .classList.add('active');
-    // };
     
-    // document.querySelectorAll('.conteiner .row div').forEach(element => {
-    //     element.onclick = function (event) {
-    //         document.querySelectorAll('.conteiner .row div').forEach(element => {
-    //             element.classList.remove('active');
-    //         });
-    //         let code = this.getAttribute('data');
-    //         this.classList.add('active');
-    //     };
-    // });
+    document.onkeypress = function (event) {
+        let simpleKeys = document.querySelectorAll('.simple');
 
-    
-    document.addEventListener('keydown', (event)=> {
-        const keyName = event.key;
-        const keyCode = event.code;
+        simpleKeys.forEach(element => {
+            element.classList.remove('active');
+        });
+        document.querySelector('.simple[data = "'+event.keyCode+'"]').classList.add('active');
+        textarea.textContent += event.key;
+    };
 
-        
-        if(event.shiftKey){
-            for(let i=0; i<document.querySelectorAll('.row div').length; i++){
-                document.querySelectorAll('.row .simple')[i].style.textTransform = 'uppercase';
-                console.log('2')
-            }
-            // console.log(document.querySelectorAll('.row div'))
-        }
-        // textarea.value += keyName;
+    document.querySelectorAll('.simple').forEach(element => {
+        element.onclick = function (event) {
+            document.querySelectorAll('.simple').forEach(element => {
+                element.classList.remove('active');
+            });
+            let code = this.getAttribute('data');
+            this.classList.add('active');
+            textarea.textContent += this.textContent;
+            
 
-        // console.log(keyName);
+            //Использовать метод слайс для backspace
 
-        // console.log (event);
+            console.log(typeof(textarea.textContent));
+        };
 
-        // if(keyName == 'Shift' && keyCode == 'ShiftLeft'){
-        //     leftShift.classList.add('active');
-
-        //     document.querySelectorAll('.row div').style.textTransform = 'uppercase';
-
-        //     console.log(event, keyName);
-        //     // console.log(document.querySelectorAll('.row div'))
-        // }
-    })
-
-} 
+        element.onmousemove = function () {
+            document.querySelectorAll('.simple').forEach(element => {
+                element.classList.remove('active');
+            });
+        };
+    });
+}
 
 document.addEventListener("DOMContentLoaded", ready);
