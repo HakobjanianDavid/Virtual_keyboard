@@ -7,7 +7,21 @@ function ready() {
         [122, 120, 99, 118, 98, 110, 109, 44, 46, 47],
         [32]
     ];
-    
+
+    let secondMass = [
+        ["Backquote", "Digit1", "Digit2", "Digit3","Digit4", "Digit5",
+         "Digit6", "Digit7", "Digit8", "Digit9", "Digit0", "Minus", "Equal"],
+
+        ["KeyQ", "KeyW", "KeyE", "KeyR", "KeyT", "KeyY", "KeyU", "KeyI",
+         "KeyO", "KeyP", "BracketLeft", "BracketRight", "Backslash"],
+
+        ["KeyA", "KeyS", "KeyD", "KeyF", "KeyF", "KeyG", "KeyH", "KeyJ",
+         "KeyK", "KeyL", "Semicolon", "Quote", "Enter"],
+
+        ["KeyZ", "KeyX", "KeyC", "KeyV", "KeyB", "KeyN", "KeyM", "Comma", "Period", "Slash"],
+
+        ["Space"]
+    ];
 
     let wrapper = document.createElement('div');
     wrapper.className = 'conteiner';
@@ -15,6 +29,7 @@ function ready() {
     let backspace = document.createElement('div');
     backspace.className = 'key-button backspace';
     backspace.innerText = 'Backspace';
+    backspace.setAttribute('data', 'Backspace')
 
     let tab = document.createElement('div');
     tab.className = 'key-button tab';
@@ -27,10 +42,12 @@ function ready() {
     let capslock = document.createElement('div');
     capslock.className = 'key-button capslock';
     capslock.innerText = 'Caps Lock';
+    capslock.setAttribute('data', 'CapsLock')
 
     let leftShift = document.createElement('div');
     leftShift.className = 'key-button first-shift';
     leftShift.innerText = 'Shift';
+    leftShift.setAttribute('data', 'ShiftLeft')
 
     let rightShift = document.createElement('div');
     rightShift.className = 'key-button second-shift';
@@ -80,12 +97,12 @@ function ready() {
         for (let i = 0; i<mass.length; i++) {
             let row = document.createElement('div');
             row.className = 'row';
-            let newMass = mass[i];
+            // let newMass = commonMass.mass[i];
             for(let b = 0; b<mass[i].length; b++) {
                     let key = document.createElement('div');
                     key.innerText = String.fromCharCode(mass[i][b]);
-                    // key.innerText = String.fromCodePoint(mass[i][b]);
-                    key.setAttribute('data', mass[i][b]);
+                    key.setAttribute('data', secondMass[i][b] );
+
                     key.classList.add('simple');
                     row.appendChild(key);
 
@@ -139,68 +156,156 @@ function ready() {
     
     
     init();
+    let flag = false;
 
-    // document.onkeydown = function (event) {}
-
-    
     document.onkeydown = function (event) {
-        let code =  event.code; 
+        let simpleKeys = document.querySelectorAll('.simple');
         let content = textarea.textContent;
-        
+        let code = event.code;
+
+        simpleKeys.forEach(element => {
+            element.classList.remove('active');
+        });
+
+        if(code == 'CapsLock') {
+            if(flag == false) {
+                flag = true;
+                capslock.classList.add('active');
+                simpleKeys.forEach(element => {
+                    element.style.textTransform = 'uppercase';
+                });
+            } else {
+                // if(code == 'Backspace') {
+                //     flag = false;
+                // }
+                flag = false;
+                capslock.classList.remove('active');
+                simpleKeys.forEach(element => {
+                    element.style.textTransform = '';
+                });
+            }
+        }
+
+        if(code == 'ShiftLeft') {
+
+            leftShift.classList.add('active');
+            simpleKeys.forEach(element => {
+                element.style.textTransform = 'uppercase';
+            });
+        }
+
         let result = '';
-        if(code == 'Backspace' ) {
+
+        if(code == 'Backspace' && content.length !== 0) {
             backspace.classList.add('active');
             result = content.split('');
             let b = result.pop();
             textarea.innerText = result.join('');
-        } else if(code == 'Delete') {
+        }
+
+        if(code == 'Delete') {
             del.classList.add('active');
         }
-    };
 
-    document.onkeypress = function (event) {
-        let simpleKeys = document.querySelectorAll('.simple');
-    
-        simpleKeys.forEach(element => {
-            element.classList.remove('active');
-        });
-        document.querySelector('.simple[data = "'+event.keyCode+'"]').classList.add('active');
-        textarea.textContent += event.key;
-    
-    };
-
-    document.onkeyup = function (event) {
-        let code =  event.code; 
-        let simpleKeys = document.querySelectorAll('.simple');
-
-
-        if(code == 'Backspace' ) {
-            backspace.classList.remove('active');
-        } else if(code == 'Delete') {
-            del.classList.remove('active');            
-        } else {
+        if(code != 'Delete' && code != 'Backspace' && code != 'ShiftLeft' && code != 'CapsLock') {
             simpleKeys.forEach(element => {
-                element.classList.remove('active');
+                if (element.getAttribute('data') == code) {
+                    element.classList.add('active');
+                }
             });
+            textarea.textContent += event.key;    
         }
     }
 
-    document.querySelectorAll('.simple').forEach(element => {
+    document.onkeypress = function (event) {
+
+    };
+
+    document.onkeyup = function (event) {
+        let simpleKeys = document.querySelectorAll('.simple');
+        let code = event.code;
+
+        simpleKeys.forEach(element => {
+            element.classList.remove('active');
+        });
+
+        if(code == 'ShiftLeft') {
+            leftShift.classList.remove('active');
+            simpleKeys.forEach(element => {
+                element.style.textTransform = '';
+            });
+        }
+
+        if(code == 'Delete') {
+            del.classList.remove('active');
+        }
+
+        if(code == 'Backspace' ) {
+            backspace.classList.remove('active');
+        }
+    }
+
+    document.querySelectorAll('.row div').forEach(element => {
+        let result = '';
+        let content = textarea.textContent;
+        let simpleKeys = document.querySelectorAll('.simple');
+        
         element.onclick = function (event) {
             
             document.querySelectorAll('.simple').forEach(element => {
                 element.classList.remove('active');
             });
+            
             let code = this.getAttribute('data');
+
+            if(code != 'Backspace' && code != 'ShiftLeft' && code != 'CapsLock') {
+                textarea.textContent += this.textContent;
+            } 
+            if (code == 'Backspace'){
+                backspace.classList.add('active');
+                result = content.split('');
+                let b = result.pop();
+                textarea.innerText = result.join('');
+            }
+            if (code == 'ShiftLeft') {
+                if (flag == true){
+                    flag = false;
+                    simpleKeys.forEach(element => {
+                        element.style.textTransform = '';
+                    }); 
+                    leftShift.classList.remove('active');
+                } else {
+                    flag = true;
+                    leftShift.classList.add('active');
+                    simpleKeys.forEach(element => {
+                        element.style.textTransform = 'uppercase';
+                    }); 
+                }
+            }
+            if(code == 'CapsLock') {
+                if (flag == true){
+                    flag = false;
+                    simpleKeys.forEach(element => {
+                        element.style.textTransform = '';
+                    }); 
+                    capslock.classList.remove('active');
+                } else {
+                    flag = true;
+                    capslock.classList.add('active');
+                    simpleKeys.forEach(element => {
+                        element.style.textTransform = 'uppercase';
+                    }); 
+                }
+            }
+            
             this.classList.add('active');
-            textarea.textContent += this.textContent;
         };
 
         element.onmousemove = function () {
-            document.querySelectorAll('.simple').forEach(element => {
+            document.querySelectorAll('.row div').forEach(element => {
                 element.classList.remove('active');
             });
-        }
+        };
     });
 }
 
